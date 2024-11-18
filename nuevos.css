@@ -1,0 +1,100 @@
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: #d0d60d; 
+}
+
+.container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  background: rgb(11, 205, 34); 
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+}
+
+
+.form-container {
+  display: none; 
+}
+
+.form-container.active {
+  display: block; 
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007BFF; 
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3; 
+}
+
+p {
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+a {
+  color: #0a15db; 
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#gameForm button {
+  margin: 5px; 
+}
+
+#gameResult {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #000; 
+}
+
+
+#hojaButton, #espadaButton {
+  background-color: #007BFF; 
+  color: rgb(0, 0, 0);
+}
+
+#hojaButton:hover, #espadaButton:hover {
+  background-color: #388E3C; 
+}
+
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 90%; 
+  }
+
+  button {
+    font-size: 19px;
+    padding: 8px 15px;
+  }
+
+  input {
+    font-size: 18px;
+  }
+}

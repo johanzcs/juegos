@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Piedra, Papel o Tijeras</title>
+  <link rel="stylesheet" href="nuevos.css">
+</head>
+<body>
+  <div class="container">
+    
+    <div id="loginForm" class="form-container active">
+      <h2>Iniciar Sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo Electrónico" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <button onclick="app.login()">Iniciar Sesión</button>
+      <p>¿No tienes cuenta? <a href="#" onclick="app.switchForm('registerForm')">Regístrate aquí</a></p>
+    </div>
+
+    
+    <div id="registerForm" class="form-container">
+      <h2>Registrarse</h2>
+      <input type="text" id="registerName" placeholder="Nombre" required>
+      <input type="email" id="registerEmail" placeholder="Correo Electrónico" required>
+      <input type="password" id="registerPassword" placeholder="Contraseña" required>
+      <button onclick="app.register()">Registrarse</button>
+      <p>¿Ya tienes cuenta? <a href="#" onclick="app.switchForm('loginForm')">Inicia sesión aquí</a></p>
+    </div>
+
+   
+    <div id="gameMenuForm" class="form-container">
+      <h2>Selecciona el Juego</h2>
+      <button onclick="app.startGame('clasico')">Juego Clásico</button>
+      <button onclick="app.startGame('nuevo')">Nuevo Juego</button>
+      <button onclick="app.logout()">Cerrar Sesión</button>
+    </div>
+
+    
+    <div id="gameForm" class="form-container">
+      <h2 id="gameTitle"></h2>
+      <p>Selecciona tu opción:</p>
+      <button onclick="app.play('Piedra')">✊ Piedra</button>
+      <button onclick="app.play('Papel')">✋ Papel</button>
+      <button onclick="app.play('Tijeras')">✌ Tijeras</button>
+      <button onclick="app.play('Hoja')" id="hojaButton" style="display:none;">📄 Hoja</button>
+      <button onclick="app.play('Espada')" id="espadaButton" style="display:none;">⚔ Espada</button>
+      <p id="gameResult"></p>
+      <button onclick="app.backToMenu()">Volver al Menú</button>
+    </div>
+  </div>
+    <script>
+        class User {
+  constructor(name, email, password) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+  }
+}
+
+class App {
+  constructor() {
+    this.users = [];
+    this.currentUser = null;
+    this.currentGame = null;
+    this.elements = {
+      loginForm: document.getElementById('loginForm'),
+      registerForm: document.getElementById('registerForm'),
+      gameMenuForm: document.getElementById('gameMenuForm'),
+      gameForm: document.getElementById('gameForm'),
+      gameResult: document.getElementById('gameResult'),
+      gameTitle: document.getElementById('gameTitle'),
+      hojaButton: document.getElementById('hojaButton'),
+      espadaButton: document.getElementById('espadaButton'),
+    };
+  }
+
+  switchForm(formId) {
+    document.querySelectorAll('.form-container').forEach(form => {
+      form.classList.remove('active');
+    });
+    this.elements[formId].classList.add('active');
+  }
+
+  register() {
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+
+    if (!name || !email || !password) {
+      alert('Por favor, completa todos los campos.');
+      return;
+    }
+
+    const existingUser = this.users.find(user => user.email === email);
+    if (existingUser) {
+      alert('Este correo ya está registrado.');
+      return;
+    }
+
+    this.users.push(new User(name, email, password));
+    alert('¡Registro exitoso!');
+    this.switchForm('loginForm');
+  }
+
+  login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const user = this.users.find(user => user.email === email && user.password === password);
+    if (!user) {
+      alert('Correo o contraseña incorrectos.');
+      return;
+    }
+
+    this.currentUser = user;
+    alert(`¡Bienvenido, ${user.name}!`);
+    this.switchForm('gameMenuForm');
+  }
+
+  logout() {
+    this.currentUser = null;
+    alert('Has cerrado sesión.');
+    this.switchForm('loginForm');
+  }
+
+  startGame(type) {
+    this.currentGame = type;
+    if (type === 'clasico') {
+      this.elements.gameTitle.textContent = 'Juego Clásico: Piedra, Papel o Tijeras';
+      this.elements.hojaButton.style.display = 'none';
+      this.elements.espadaButton.style.display = 'none';
+    } else if (type === 'nuevo') {
+      this.elements.gameTitle.textContent = 'Nuevo Juego: Piedra, Papel, Tijeras, Hoja y Espada';
+      this.elements.hojaButton.style.display = 'inline-block';
+      this.elements.espadaButton.style.display = 'inline-block';
+    }
+    this.switchForm('gameForm');
+  }
+
+  play(choice) {
+    const options =
+      this.currentGame === 'clasico'
+        ? ['Piedra', 'Papel', 'Tijeras']
+        : ['Piedra', 'Papel', 'Tijeras', 'Hoja', 'Espada'];
+
+    const computerChoice = options[Math.floor(Math.random() * options.length)];
+    let result;
+
+    if (choice === computerChoice) {
+      result = '¡Empate!';
+    } else if (
+      (choice === 'Piedra' && (computerChoice === 'Tijeras' || computerChoice === 'Hoja')) ||
+      (choice === 'Papel' && (computerChoice === 'Piedra' || computerChoice === 'Espada')) ||
+      (choice === 'Tijeras' && (computerChoice === 'Papel' || computerChoice === 'Hoja')) ||
+      (choice === 'Hoja' && (computerChoice === 'Papel' || computerChoice === 'Espada')) ||
+      (choice === 'Espada' && (computerChoice === 'Piedra' || computerChoice === 'Tijeras'))
+    ) {
+      result = '¡Ganaste!';
+    } else {
+      result = '¡Perdiste!';
+    }
+
+    this.elements.gameResult.textContent = `Elegiste: ${choice}, Computadora: ${computerChoice}. ${result}`;
+  }
+
+  backToMenu() {
+    this.switchForm('gameMenuForm');
+  }
+}
+
+const app = new App();
+
+    </script>
+</body>
+</html>
