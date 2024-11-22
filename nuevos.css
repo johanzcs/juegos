@@ -74,12 +74,13 @@ a:hover {
 }
 
 
-#hojaButton, #espadaButton {
+
+#lagartoButton, #spockButton {
   background-color: #007BFF; 
   color: rgb(0, 0, 0);
 }
 
-#hojaButton:hover, #espadaButton:hover {
+#lagartoButton:hover, #spockButton:hover {
   background-color: #388E3C; 
 }
 
