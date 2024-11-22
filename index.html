@@ -42,133 +42,178 @@
       <button onclick="app.play('Piedra')">✊ Piedra</button>
       <button onclick="app.play('Papel')">✋ Papel</button>
       <button onclick="app.play('Tijeras')">✌ Tijeras</button>
-      <button onclick="app.play('Hoja')" id="hojaButton" style="display:none;">📄 Hoja</button>
-      <button onclick="app.play('Espada')" id="espadaButton" style="display:none;">⚔ Espada</button>
+      <button onclick="app.play('Lagarto')" id="lagartoButton" style="display:none;">🦎 Lagarto</button>
+      <button onclick="app.play('Spock')" id="spockButton" style="display:none;">🖖 Spock</button>
       <p id="gameResult"></p>
       <button onclick="app.backToMenu()">Volver al Menú</button>
     </div>
   </div>
-    <script>
-        class User {
-  constructor(name, email, password) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-  }
-}
-
-class App {
-  constructor() {
-    this.users = [];
-    this.currentUser = null;
-    this.currentGame = null;
-    this.elements = {
-      loginForm: document.getElementById('loginForm'),
-      registerForm: document.getElementById('registerForm'),
-      gameMenuForm: document.getElementById('gameMenuForm'),
-      gameForm: document.getElementById('gameForm'),
-      gameResult: document.getElementById('gameResult'),
-      gameTitle: document.getElementById('gameTitle'),
-      hojaButton: document.getElementById('hojaButton'),
-      espadaButton: document.getElementById('espadaButton'),
-    };
-  }
-
-  switchForm(formId) {
-    document.querySelectorAll('.form-container').forEach(form => {
-      form.classList.remove('active');
-    });
-    this.elements[formId].classList.add('active');
-  }
-
-  register() {
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-
-    if (!name || !email || !password) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-
-    const existingUser = this.users.find(user => user.email === email);
-    if (existingUser) {
-      alert('Este correo ya está registrado.');
-      return;
-    }
-
-    this.users.push(new User(name, email, password));
-    alert('¡Registro exitoso!');
-    this.switchForm('loginForm');
-  }
-
-  login() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    const user = this.users.find(user => user.email === email && user.password === password);
-    if (!user) {
-      alert('Correo o contraseña incorrectos.');
-      return;
-    }
-
-    this.currentUser = user;
-    alert(`¡Bienvenido, ${user.name}!`);
-    this.switchForm('gameMenuForm');
-  }
-
-  logout() {
-    this.currentUser = null;
-    alert('Has cerrado sesión.');
-    this.switchForm('loginForm');
-  }
-
-  startGame(type) {
-    this.currentGame = type;
-    if (type === 'clasico') {
-      this.elements.gameTitle.textContent = 'Juego Clásico: Piedra, Papel o Tijeras';
-      this.elements.hojaButton.style.display = 'none';
-      this.elements.espadaButton.style.display = 'none';
-    } else if (type === 'nuevo') {
-      this.elements.gameTitle.textContent = 'Nuevo Juego: Piedra, Papel, Tijeras, Hoja y Espada';
-      this.elements.hojaButton.style.display = 'inline-block';
-      this.elements.espadaButton.style.display = 'inline-block';
-    }
-    this.switchForm('gameForm');
-  }
-
-  play(choice) {
-    const options =
-      this.currentGame === 'clasico'
-        ? ['Piedra', 'Papel', 'Tijeras']
-        : ['Piedra', 'Papel', 'Tijeras', 'Hoja', 'Espada'];
-
-    const computerChoice = options[Math.floor(Math.random() * options.length)];
-    let result;
-
-    if (choice === computerChoice) {
-      result = '¡Empate!';
-    } else if (
-      (choice === 'Piedra' && (computerChoice === 'Tijeras' || computerChoice === 'Hoja')) ||
-      (choice === 'Papel' && (computerChoice === 'Piedra' || computerChoice === 'Espada')) ||
-      (choice === 'Tijeras' && (computerChoice === 'Papel' || computerChoice === 'Hoja')) ||
-      (choice === 'Hoja' && (computerChoice === 'Papel' || computerChoice === 'Espada')) ||
-      (choice === 'Espada' && (computerChoice === 'Piedra' || computerChoice === 'Tijeras'))
-    ) {
-      result = '¡Ganaste!';
-    } else {
-      result = '¡Perdiste!';
-    }
-
-    this.elements.gameResult.textContent = `Elegiste: ${choice}, Computadora: ${computerChoice}. ${result}`;
-  }
-
-  backToMenu() {
-    this.switchForm('gameMenuForm');
-  }
-}
-
-const app = new App();
+    <script>  
+      class Game {
+        constructor(type) {
+          this.type = type;
+          this.options = [];
+        }
+      
+        play(choice) {
+          const computerChoice = this.options[Math.floor(Math.random() * this.options.length)];
+          let result;
+      
+          if (choice === computerChoice) {
+            result = '¡Empate!';
+          } else if (this.isWinningChoice(choice, computerChoice)) {
+            result = '¡Ganaste!';
+          } else {
+            result = '¡Perdiste!';
+          }
+      
+          return { choice, computerChoice, result };
+        }
+      
+        
+        isWinningChoice(choice, computerChoice) {
+          throw new Error('Este método debe ser implementado por las clases derivadas.');
+        }
+      }
+      
+      
+      class ClassicGame extends Game {
+        constructor() {
+          super('clasico');
+          this.options = ['Piedra', 'Papel', 'Tijeras'];
+        }
+      
+        isWinningChoice(choice, computerChoice) {
+          return (
+            (choice === 'Piedra' && computerChoice === 'Tijeras') ||
+            (choice === 'Papel' && computerChoice === 'Piedra') ||
+            (choice === 'Tijeras' && computerChoice === 'Papel')
+          );
+        }
+      }
+      
+      
+      class NewGame extends Game {
+        constructor() {
+          super('nuevo');
+          this.options = ['Piedra', 'Papel', 'Tijeras', 'Lagarto', 'Spock'];
+        }
+      
+        isWinningChoice(choice, computerChoice) {
+          return (
+            (choice === 'Piedra' && (computerChoice === 'Tijeras' || computerChoice === 'Lagarto')) ||
+            (choice === 'Papel' && (computerChoice === 'Piedra' || computerChoice === 'Spock')) ||
+            (choice === 'Tijeras' && (computerChoice === 'Papel' || computerChoice === 'Lagarto')) ||
+            (choice === 'Lagarto' && (computerChoice === 'Papel' || computerChoice === 'Spock')) ||
+            (choice === 'Spock' && (computerChoice === 'Piedra' || computerChoice === 'Tijeras'))
+          );
+        }
+      }
+      
+      
+      class User {
+        constructor(name, email, password) {
+          this.name = name;
+          this.email = email;
+          this.password = password;
+        }
+      }
+      
+      
+      class App {
+        constructor() {
+          this.users = [];
+          this.currentUser = null;
+          this.currentGame = null;
+          this.elements = {
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            gameMenuForm: document.getElementById('gameMenuForm'),
+            gameForm: document.getElementById('gameForm'),
+            gameResult: document.getElementById('gameResult'),
+            gameTitle: document.getElementById('gameTitle'),
+            lagartoButton: document.getElementById('lagartoButton'),
+            spockButton: document.getElementById('spockButton'),
+          };
+        }
+      
+        switchForm(formId) {
+          document.querySelectorAll('.form-container').forEach(form => {
+            form.classList.remove('active');
+          });
+          this.elements[formId].classList.add('active');
+        }
+      
+        register() {
+          const name = document.getElementById('registerName').value;
+          const email = document.getElementById('registerEmail').value;
+          const password = document.getElementById('registerPassword').value;
+      
+          if (!name || !email || !password) {
+            alert('Por favor, completa todos los campos.');
+            return;
+          }
+      
+          const existingUser = this.users.find(user => user.email === email);
+          if (existingUser) {
+            alert('Este correo ya está registrado.');
+            return;
+          }
+      
+          this.users.push(new User(name, email, password));
+          alert('¡Registro exitoso!');
+          this.switchForm('loginForm');
+        }
+      
+        login() {
+          const email = document.getElementById('loginEmail').value;
+          const password = document.getElementById('loginPassword').value;
+      
+          const user = this.users.find(user => user.email === email && user.password === password);
+          if (!user) {
+            alert('Correo o contraseña incorrectos.');
+            return;
+          }
+      
+          this.currentUser = user;
+          alert(`¡Bienvenido, ${user.name}!`);
+          this.switchForm('gameMenuForm');
+        }
+      
+        logout() {
+          this.currentUser = null;
+          alert('Has cerrado sesión.');
+          this.switchForm('loginForm');
+        }
+      
+        startGame(type) {
+          if (type === 'clasico') {
+            this.currentGame = new ClassicGame();
+            this.elements.gameTitle.textContent = 'Juego Clásico: Piedra, Papel o Tijeras';
+            this.elements.lagartoButton.style.display = 'none';
+            this.elements.spockButton.style.display = 'none';
+          } else if (type === 'nuevo') {
+            this.currentGame = new NewGame();
+            this.elements.gameTitle.textContent = 'Nuevo Juego: Piedra, Papel, Tijeras, Lagarto y Spock';
+            this.elements.lagartoButton.style.display = 'inline-block';
+            this.elements.spockButton.style.display = 'inline-block';
+          }
+          this.switchForm('gameForm');
+        }
+      
+        play(choice) {
+          const result = this.currentGame.play(choice);
+          this.elements.gameResult.textContent = `Elegiste: ${result.choice}, Computadora: ${result.computerChoice}. ${result.result}`;
+        }
+      
+        backToMenu() {
+          this.switchForm('gameMenuForm');
+        }
+      }
+      
+     
+      const app = new App();
+      
 
     </script>
 </body>
