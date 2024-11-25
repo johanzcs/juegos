@@ -9,205 +9,235 @@
 <body>
   <div class="container">
     
-    <div id="loginForm" class="form-container active">
+    <div id="formularioLogin" class="form-container active">
       <h2>Iniciar Sesión</h2>
       <input type="email" id="loginEmail" placeholder="Correo Electrónico" required>
       <input type="password" id="loginPassword" placeholder="Contraseña" required>
-      <button onclick="app.login()">Iniciar Sesión</button>
-      <p>¿No tienes cuenta? <a href="#" onclick="app.switchForm('registerForm')">Regístrate aquí</a></p>
+      <button onclick="app.iniciarSesion()">Iniciar Sesión</button>
+      <p>¿No tienes cuenta? <a href="#" onclick="app.cambiarFormulario('formularioRegistro')">Regístrate aquí</a></p>
     </div>
 
     
-    <div id="registerForm" class="form-container">
+    <div id="formularioRegistro" class="form-container">
       <h2>Registrarse</h2>
-      <input type="text" id="registerName" placeholder="Nombre" required>
-      <input type="email" id="registerEmail" placeholder="Correo Electrónico" required>
-      <input type="password" id="registerPassword" placeholder="Contraseña" required>
-      <button onclick="app.register()">Registrarse</button>
-      <p>¿Ya tienes cuenta? <a href="#" onclick="app.switchForm('loginForm')">Inicia sesión aquí</a></p>
+      <input type="text" id="registroNombre" placeholder="Nombre" required>
+      <input type="email" id="registroEmail" placeholder="Correo Electrónico" required>
+      <input type="password" id="registroPassword" placeholder="Contraseña" required>
+      <button onclick="app.registrar()">Registrarse</button>
+      <p>¿Ya tienes cuenta? <a href="#" onclick="app.cambiarFormulario('formularioLogin')">Inicia sesión aquí</a></p>
     </div>
 
    
-    <div id="gameMenuForm" class="form-container">
+    <div id="formularioMenuJuego" class="form-container">
       <h2>Selecciona el Juego</h2>
-      <button onclick="app.startGame('clasico')">Juego Clásico</button>
-      <button onclick="app.startGame('nuevo')">Nuevo Juego</button>
-      <button onclick="app.logout()">Cerrar Sesión</button>
+      <button onclick="app.iniciarJuego('clasico')">Juego Clásico</button>
+      <button onclick="app.iniciarJuego('nuevo')">Nuevo Juego</button>
+      <button onclick="app.cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     
-    <div id="gameForm" class="form-container">
-      <h2 id="gameTitle"></h2>
+    <div id="formularioJuego" class="form-container">
+      <h2 id="tituloJuego"></h2>
       <p>Selecciona tu opción:</p>
-      <button onclick="app.play('Piedra')">✊ Piedra</button>
-      <button onclick="app.play('Papel')">✋ Papel</button>
-      <button onclick="app.play('Tijeras')">✌ Tijeras</button>
-      <button onclick="app.play('Lagarto')" id="lagartoButton" style="display:none;">🦎 Lagarto</button>
-      <button onclick="app.play('Spock')" id="spockButton" style="display:none;">🖖 Spock</button>
-      <p id="gameResult"></p>
-      <button onclick="app.backToMenu()">Volver al Menú</button>
+      <button onclick="app.jugar('Piedra')">✊ Piedra</button>
+      <button onclick="app.jugar('Papel')">✋ Papel</button>
+      <button onclick="app.jugar('Tijeras')">✌ Tijeras</button>
+      <button onclick="app.jugar('Lagarto')" id="botonLagarto" style="display:none;">🦎 Lagarto</button>
+      <button onclick="app.jugar('Spock')" id="botonSpock" style="display:none;">🖖 Spock</button>
+      <p id="resultadoJuego"></p>
+      <button onclick="app.volverAlMenu()">Volver al Menú</button>
     </div>
   </div>
     <script>  
-      class Game {
-        constructor(type) {
-          this.type = type;
-          this.options = [];
+      class Juego {
+        constructor(tipo) {
+          this.tipo = tipo;
+          this.opciones = [];
         }
       
-        play(choice) {
-          const computerChoice = this.options[Math.floor(Math.random() * this.options.length)];
-          let result;
+        jugar(eleccion) {
+          const eleccionComputadora = this.opciones[Math.floor(Math.random() * this.opciones.length)];
+          let resultado;
       
-          if (choice === computerChoice) {
-            result = '¡Empate!';
-          } else if (this.isWinningChoice(choice, computerChoice)) {
-            result = '¡Ganaste!';
+          if (eleccion === eleccionComputadora) {
+            resultado = '¡Empate!';
+          } else if (this.esEleccionGanadora(eleccion, eleccionComputadora)) {
+            resultado = '¡Ganaste!';
           } else {
-            result = '¡Perdiste!';
+            resultado = '¡Perdiste!';
           }
       
-          return { choice, computerChoice, result };
+          return { eleccion, eleccionComputadora, resultado };
         }
       
         
-        isWinningChoice(choice, computerChoice) {
+        esEleccionGanadora(eleccion, eleccionComputadora) {
           throw new Error('Este método debe ser implementado por las clases derivadas.');
         }
       }
       
       
-      class ClassicGame extends Game {
+      class JuegoClasico extends Juego {
         constructor() {
           super('clasico');
-          this.options = ['Piedra', 'Papel', 'Tijeras'];
+          this.opciones = ['Piedra', 'Papel', 'Tijeras'];
         }
       
-        isWinningChoice(choice, computerChoice) {
-          return (
-            (choice === 'Piedra' && computerChoice === 'Tijeras') ||
-            (choice === 'Papel' && computerChoice === 'Piedra') ||
-            (choice === 'Tijeras' && computerChoice === 'Papel')
-          );
+        esEleccionGanadora(eleccion, eleccionComputadora) {
+          if (eleccion === 'Piedra') {
+            if (eleccionComputadora === 'Tijeras') {
+              return true;
+            }
+          }
+          if (eleccion === 'Papel') {
+            if (eleccionComputadora === 'Piedra') {
+              return true;
+            }
+          }
+          if (eleccion === 'Tijeras') {
+            if (eleccionComputadora === 'Papel') {
+              return true;
+            }
+          }
+          return false;
         }
       }
       
       
-      class NewGame extends Game {
+      class NuevoJuego extends Juego {
         constructor() {
           super('nuevo');
-          this.options = ['Piedra', 'Papel', 'Tijeras', 'Lagarto', 'Spock'];
+          this.opciones = ['Piedra', 'Papel', 'Tijeras', 'Lagarto', 'Spock'];
         }
       
-        isWinningChoice(choice, computerChoice) {
-          return (
-            (choice === 'Piedra' && (computerChoice === 'Tijeras' || computerChoice === 'Lagarto')) ||
-            (choice === 'Papel' && (computerChoice === 'Piedra' || computerChoice === 'Spock')) ||
-            (choice === 'Tijeras' && (computerChoice === 'Papel' || computerChoice === 'Lagarto')) ||
-            (choice === 'Lagarto' && (computerChoice === 'Papel' || computerChoice === 'Spock')) ||
-            (choice === 'Spock' && (computerChoice === 'Piedra' || computerChoice === 'Tijeras'))
-          );
+        esEleccionGanadora(eleccion, eleccionComputadora) {
+          if (eleccion === 'Piedra') {
+            if (eleccionComputadora === 'Tijeras' || eleccionComputadora === 'Lagarto') {
+              return true;
+            }
+          }
+          if (eleccion === 'Papel') {
+            if (eleccionComputadora === 'Piedra' || eleccionComputadora === 'Spock') {
+              return true;
+            }
+          }
+          if (eleccion === 'Tijeras') {
+            if (eleccionComputadora === 'Papel' || eleccionComputadora === 'Lagarto') {
+              return true;
+            }
+          }
+          if (eleccion === 'Lagarto') {
+            if (eleccionComputadora === 'Papel' || eleccionComputadora === 'Spock') {
+              return true;
+            }
+          }
+          if (eleccion === 'Spock') {
+            if (eleccionComputadora === 'Piedra' || eleccionComputadora === 'Tijeras') {
+              return true;
+            }
+          }
+          return false;
         }
       }
       
       
-      class User {
-        constructor(name, email, password) {
-          this.name = name;
-          this.email = email;
-          this.password = password;
+      class Usuario {
+        constructor(nombre, correo, contraseña) {
+          this.nombre = nombre;
+          this.correo = correo;
+          this.contraseña = contraseña;
         }
       }
       
       
       class App {
         constructor() {
-          this.users = [];
-          this.currentUser = null;
-          this.currentGame = null;
-          this.elements = {
-            loginForm: document.getElementById('loginForm'),
-            registerForm: document.getElementById('registerForm'),
-            gameMenuForm: document.getElementById('gameMenuForm'),
-            gameForm: document.getElementById('gameForm'),
-            gameResult: document.getElementById('gameResult'),
-            gameTitle: document.getElementById('gameTitle'),
-            lagartoButton: document.getElementById('lagartoButton'),
-            spockButton: document.getElementById('spockButton'),
+          this.usuarios = [];
+          this.usuarioActual = null;
+          this.juegoActual = null;
+          this.elementos = {
+            formularioLogin: document.getElementById('formularioLogin'),
+            formularioRegistro: document.getElementById('formularioRegistro'),
+            formularioMenuJuego: document.getElementById('formularioMenuJuego'),
+            formularioJuego: document.getElementById('formularioJuego'),
+            resultadoJuego: document.getElementById('resultadoJuego'),
+            tituloJuego: document.getElementById('tituloJuego'),
+            botonLagarto: document.getElementById('botonLagarto'),
+            botonSpock: document.getElementById('botonSpock'),
           };
         }
       
-        switchForm(formId) {
-          document.querySelectorAll('.form-container').forEach(form => {
-            form.classList.remove('active');
+        cambiarFormulario(idFormulario) {
+          document.querySelectorAll('.form-container').forEach(formulario => {
+            formulario.classList.remove('active');
           });
-          this.elements[formId].classList.add('active');
+          this.elementos[idFormulario].classList.add('active');
         }
       
-        register() {
-          const name = document.getElementById('registerName').value;
-          const email = document.getElementById('registerEmail').value;
-          const password = document.getElementById('registerPassword').value;
+        registrar() {
+          const nombre = document.getElementById('registroNombre').value;
+          const correo = document.getElementById('registroEmail').value;
+          const contraseña = document.getElementById('registroPassword').value;
       
-          if (!name || !email || !password) {
+          if (!nombre || !correo || !contraseña) {
             alert('Por favor, completa todos los campos.');
             return;
           }
       
-          const existingUser = this.users.find(user => user.email === email);
-          if (existingUser) {
+          const usuarioExistente = this.usuarios.find(usuario => usuario.correo === correo);
+          if (usuarioExistente) {
             alert('Este correo ya está registrado.');
             return;
           }
       
-          this.users.push(new User(name, email, password));
+          this.usuarios.push(new Usuario(nombre, correo, contraseña));
           alert('¡Registro exitoso!');
-          this.switchForm('loginForm');
+          this.cambiarFormulario('formularioLogin');
         }
       
-        login() {
-          const email = document.getElementById('loginEmail').value;
-          const password = document.getElementById('loginPassword').value;
+        iniciarSesion() {
+          const correo = document.getElementById('loginEmail').value;
+          const contraseña = document.getElementById('loginPassword').value;
       
-          const user = this.users.find(user => user.email === email && user.password === password);
-          if (!user) {
+          const usuario = this.usuarios.find(usuario => usuario.correo === correo && usuario.contraseña === contraseña);
+          if (!usuario) {
             alert('Correo o contraseña incorrectos.');
             return;
           }
       
-          this.currentUser = user;
-          alert(`¡Bienvenido, ${user.name}!`);
-          this.switchForm('gameMenuForm');
+          this.usuarioActual = usuario;
+          alert(`¡Bienvenido, ${usuario.nombre}!`);
+          this.cambiarFormulario('formularioMenuJuego');
         }
       
-        logout() {
-          this.currentUser = null;
+        cerrarSesion() {
+          this.usuarioActual = null;
           alert('Has cerrado sesión.');
-          this.switchForm('loginForm');
+          this.cambiarFormulario('formularioLogin');
         }
       
-        startGame(type) {
-          if (type === 'clasico') {
-            this.currentGame = new ClassicGame();
-            this.elements.gameTitle.textContent = 'Juego Clásico: Piedra, Papel o Tijeras';
-            this.elements.lagartoButton.style.display = 'none';
-            this.elements.spockButton.style.display = 'none';
-          } else if (type === 'nuevo') {
-            this.currentGame = new NewGame();
-            this.elements.gameTitle.textContent = 'Nuevo Juego: Piedra, Papel, Tijeras, Lagarto y Spock';
-            this.elements.lagartoButton.style.display = 'inline-block';
-            this.elements.spockButton.style.display = 'inline-block';
+        iniciarJuego(tipo) {
+          if (tipo === 'clasico') {
+            this.juegoActual = new JuegoClasico();
+            this.elementos.tituloJuego.textContent = 'Juego Clásico: Piedra, Papel o Tijeras';
+            this.elementos.botonLagarto.style.display = 'none';
+            this.elementos.botonSpock.style.display = 'none';
+          } else if (tipo === 'nuevo') {
+            this.juegoActual = new NuevoJuego();
+            this.elementos.tituloJuego.textContent = 'Nuevo Juego: Piedra, Papel, Tijeras, Lagarto y Spock';
+            this.elementos.botonLagarto.style.display = 'inline-block';
+            this.elementos.botonSpock.style.display = 'inline-block';
           }
-          this.switchForm('gameForm');
+          this.cambiarFormulario('formularioJuego');
         }
       
-        play(choice) {
-          const result = this.currentGame.play(choice);
-          this.elements.gameResult.textContent = `Elegiste: ${result.choice}, Computadora: ${result.computerChoice}. ${result.result}`;
+        jugar(eleccion) {
+          const resultado = this.juegoActual.jugar(eleccion);
+          this.elementos.resultadoJuego.textContent = `Elegiste: ${resultado.eleccion}, Computadora: ${resultado.eleccionComputadora}. ${resultado.resultado}`;
         }
       
-        backToMenu() {
-          this.switchForm('gameMenuForm');
+        volverAlMenu() {
+          this.cambiarFormulario('formularioMenuJuego');
         }
       }
       
@@ -215,6 +245,27 @@
       const app = new App();
       
 
+
     </script>
 </body>
 </html>
+
+
+    
+   
+
+    
+   
+       
+        
+       
+     
+      
+      
+  
+          
+         
+      
+      
+      
+     
